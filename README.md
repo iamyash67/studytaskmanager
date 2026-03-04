@@ -45,7 +45,7 @@ Visit: http://127.0.0.1:8000/
 | S1 | ✅ | Edit tasks |
 | S2 | ✅ | Delete tasks |
 | C1 | ✅ | Filter by category |
-| W1 | ✅ | Calendar integration (out of scope) |
+| W1 | ✅ | Calendar integration |
 
 ---
 
