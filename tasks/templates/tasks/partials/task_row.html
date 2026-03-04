@@ -1,0 +1,53 @@
+<div class="d-flex justify-content-between align-items-start border-bottom py-2" data-task-row data-task-id="{{ task.pk }}">
+    <div class="pe-2">
+        <div class="fw-semibold">
+            {{ task.title }}
+            {% if task.priority == "high" %}
+            <span class="badge bg-danger ms-2">High</span>
+            {% elif task.priority == "medium" %}
+            <span class="badge bg-warning text-dark ms-2">Medium</span>
+            {% else %}
+            <span class="badge bg-secondary ms-2">Low</span>
+            {% endif %}
+            {% if task.estimated_hours %}
+            <span class="badge bg-info text-dark ms-2">{{ task.estimated_hours }}h</span>
+            {% endif %}
+            {% if task.deadline and task.deadline < today %}
+            <span class="badge bg-danger ms-2">Overdue</span>
+            {% elif task.deadline and task.deadline >= today and task.deadline <= soon %}
+            <span class="badge bg-warning text-dark ms-2">Due soon</span>
+            {% endif %}
+        </div>
+        <div class="text-muted small">
+            {% if task.category %}{{ task.category.name }}{% endif %}
+            {% if task.deadline %}
+                {% if task.is_overdue %}
+                    • <span class="text-danger fw-semibold">Due {{ task.deadline|date:"d M Y" }} (Overdue)</span>
+                {% else %}
+                    • Due {{ task.deadline|date:"d M Y" }}
+                {% endif %}
+            {% endif %}
+        </div>
+        {% if task.deadline and task.deadline < today %}
+        <div class="text-muted small mt-1">
+            Suggested: break this into smaller subtasks and schedule 30-45 min blocks.
+        </div>
+        {% endif %}
+        {% if task.priority == "high" and task.deadline and task.deadline < today %}
+        <div class="text-muted small mt-1">
+            Tip: start with the highest-impact section first (outline -> draft -> refine).
+        </div>
+        {% endif %}
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-sm btn-outline-secondary" href="{% url 'task_edit' task.pk %}">Edit</a>
+        <a
+            class="btn btn-sm btn-success"
+            href="{% url 'task_complete' task.pk %}"
+            data-complete-ajax="true"
+            data-ajax-url="{% url 'task_complete_ajax' task.pk %}"
+            aria-label="Mark {{ task.title }} complete"
+        >✓</a>
+        <a class="btn btn-sm btn-outline-danger" href="{% url 'task_delete' task.pk %}">Delete</a>
+    </div>
+</div>

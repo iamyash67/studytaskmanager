@@ -1,0 +1,66 @@
+{% extends 'tasks/base.html' %}
+{% block title %}Login — Study Task Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 text-center mb-4">Study Task Manager</h1>
+
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="flash-{{ message.tags }}" role="alert" aria-live="polite">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label" for="id_username">Username</label>
+                        <input
+                            type="text"
+                            name="username"
+                            id="id_username"
+                            class="form-input"
+                            autocomplete="username"
+                            value="{{ form.username.value|default:'' }}"
+                            required
+                        >
+                        {% if form.username.errors %}
+                        <div class="text-danger small mt-1" role="alert">{{ form.username.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="id_password">Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            id="id_password"
+                            class="form-input"
+                            autocomplete="current-password"
+                            required
+                        >
+                        {% if form.password.errors %}
+                        <div class="text-danger small mt-1" role="alert">{{ form.password.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    {% if form.non_field_errors %}
+                    <div class="error-box text-center" role="alert" aria-live="assertive">
+                        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex gap-2 mt-3">
+                        <button type="submit" class="btn btn-dark w-100">Login</button>
+                        <a href="{% url 'register' %}" class="btn btn-dark w-100">Register</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

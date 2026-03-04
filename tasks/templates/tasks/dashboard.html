@@ -1,0 +1,142 @@
+{% extends "tasks/base.html" %}
+{% block title %}Dashboard — Study Task Manager{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-3">
+    <h1 class="h3 m-0">Dashboard</h1>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" href="{% url 'calendar' %}">Calendar</a>
+        <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#quickAddModal">Quick Add</button>
+        <a class="btn btn-primary" href="{% url 'task_create' %}">+ New Task</a>
+    </div>
+</div>
+
+<div class="alert alert-light border d-flex justify-content-between align-items-center">
+    <div><strong>Study Streak:</strong> {{ streak }} day{{ streak|pluralize }} 🔥</div>
+    <div class="text-muted small">Complete at least one task/day to maintain it</div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-12 col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="text-muted">Progress</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="fs-3 fw-bold" id="progress-percent">{{ progress }}%</div>
+                    <div class="text-muted small" id="progress-detail">{{ completed_count }} / {{ pending_count|add:completed_count }} done</div>
+                </div>
+
+                <div class="progress mt-2" aria-label="Completion progress">
+                    <div class="progress-bar" id="progress-bar" role="progressbar" style="width: {{ progress }}%;" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ progress }}">
+                        {{ progress }}%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header fw-semibold">Tasks completed (last 7 days)</div>
+            <div class="card-body">
+                <canvas id="weeklyChart" height="90"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <div class="text-muted">Estimated study time this week</div>
+        <div class="fs-3 fw-bold">{{ total_weekly_hours }}h</div>
+    </div>
+</div>
+
+{% if categories %}
+<div class="d-flex gap-2 flex-wrap align-items-center mb-3">
+    <span class="small text-muted fw-semibold">Filter:</span>
+    <a href="{% url 'dashboard' %}" class="badge rounded-pill text-decoration-none {% if not selected_category %}text-bg-dark{% else %}text-bg-light{% endif %}">All</a>
+    {% for cat in categories %}
+    <a href="?category={{ cat.id }}" class="badge rounded-pill text-decoration-none {% if selected_category == cat.id|stringformat:'s' %}text-bg-dark{% else %}text-bg-light{% endif %}">{{ cat.name }}</a>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted">Pending</div>
+                <div class="fs-3 fw-bold" id="pending-count">{{ pending_count }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted">Completed</div>
+                <div class="fs-3 fw-bold" id="completed-count">{{ completed_count }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header fw-semibold" id="pending-heading">Pending Tasks</div>
+            <div class="card-body" id="pending-list">
+                {% for task in pending_tasks %}
+                    {% include "tasks/partials/task_row.html" %}
+                {% empty %}
+                <div class="text-muted" data-pending-empty>No tasks yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header fw-semibold" id="completed-heading">Completed Tasks</div>
+            <div class="card-body" id="completed-list">
+                {% for task in completed_tasks %}
+                <div class="border-bottom py-2 task-completed-item">
+                    <div class="text-decoration-line-through">{{ task.title }}</div>
+                    <div class="text-muted small">
+                        {% if task.category %}{{ task.category }}{% endif %}
+                        • Done {{ task.completed_at|date:"d M Y" }}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-muted" data-completed-empty>No tasks yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="quickAddModal" tabindex="-1" aria-labelledby="quickAddLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content" method="post" action="{% url 'task_create' %}">
+            {% csrf_token %}
+            <div class="modal-header">
+                <h5 class="modal-title" id="quickAddLabel">Quick Add Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label" for="quick-add-title">Title</label>
+                    <input id="quick-add-title" name="title" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="quick-add-deadline">Deadline</label>
+                    <input id="quick-add-deadline" name="deadline" type="date" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

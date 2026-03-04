@@ -1,0 +1,29 @@
+{% extends 'tasks/base.html' %}
+{% block title %}Complete Task — Study Task Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-3">Complete Task</h1>
+
+                <div class="border rounded p-3 bg-light mb-4">
+                    <div class="fw-semibold mb-2">{{ task.title }}</div>
+                    <div class="small mb-1"><strong>Category:</strong> {{ task.category.name|default:"—" }}</div>
+                    <div class="small mb-1"><strong>Deadline:</strong> {% if task.deadline %}{{ task.deadline|date:"d M Y" }}{% else %}—{% endif %}</div>
+                    <div class="small text-muted"><strong>Status:</strong> Pending → Completed</div>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-dark">✓ Mark as Completed</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'tasks/base.html' %}
+{% block title %}Categories — Study Task Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-9">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-4">Categories</h1>
+
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="flash-{{ message.tags }}" role="alert">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="row g-4">
+                    <div class="col-12 col-md-5">
+                        <h2 class="h6 mb-3">Add Category</h2>
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label" for="{{ form.name.id_for_label }}">Name</label>
+                                {{ form.name }}
+                                {% if form.name.errors %}<div class="text-danger small mt-1" role="alert">{{ form.name.errors.0 }}</div>{% endif %}
+                            </div>
+                            <button type="submit" class="btn btn-dark w-100">Add Category</button>
+                        </form>
+                    </div>
+
+                    <div class="col-12 col-md-7">
+                        <h2 class="h6 mb-3">Your Categories</h2>
+                        {% if categories %}
+                            <div class="list-group">
+                                {% for cat in categories %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="fw-semibold">{{ cat.name }}</span>
+                                        <span class="text-muted small ms-2">({{ cat.tasks.count }} task{{ cat.tasks.count|pluralize }})</span>
+                                    </div>
+                                    <a href="{% url 'category_delete' cat.pk %}" class="btn btn-sm btn-outline-danger" aria-label="Delete {{ cat.name }}">Delete</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                        <p class="text-muted mb-0">No categories yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'tasks/base.html' %}
+{% block title %}{{ action }} Task — Study Task Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-7">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-4">{% if action == 'Create' %}Create New Task{% else %}Edit Task{% endif %}</h1>
+
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="flash-{{ message.tags }}" role="alert">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.title.id_for_label }}">Task Title</label>
+                        {{ form.title }}
+                        {% if form.title.errors %}<div class="text-danger small mt-1" role="alert">{{ form.title.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.category.id_for_label }}">Category</label>
+                        {{ form.category }}
+                        <div class="form-text">Need more categories? <a href="{% url 'category_list' %}">Manage categories</a>.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.deadline.id_for_label }}">Deadline</label>
+                        {{ form.deadline }}
+                        {% if form.deadline.errors %}<div class="text-danger small mt-1" role="alert">{{ form.deadline.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.priority.id_for_label }}">Priority</label>
+                        {{ form.priority }}
+                        {% if form.priority.errors %}<div class="text-danger small mt-1" role="alert">{{ form.priority.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label" for="{{ form.estimated_hours.id_for_label }}">Estimated Study Time (hours)</label>
+                        {{ form.estimated_hours }}
+                        {% if form.estimated_hours.errors %}<div class="text-danger small mt-1" role="alert">{{ form.estimated_hours.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-dark">{% if action == 'Create' %}Save Task{% else %}Update Task{% endif %}</button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
