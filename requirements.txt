@@ -1,7 +1,6 @@
 asgiref==3.11.1
 Django==4.2.29
 gunicorn==25.1.0
-packaging @ file:///opt/miniconda3/conda-bld/packaging_1761049079158/work
 sqlparse==0.5.5
 typing_extensions==4.15.0
 whitenoise==6.12.0
